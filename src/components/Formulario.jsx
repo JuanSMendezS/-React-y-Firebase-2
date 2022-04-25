@@ -195,9 +195,16 @@ const Formulario = () => {
                         {
                             listajuegos.map((item) => (
                                 <li className='list-group-item' key={item.id}>
-                                    <span className='lead'>{item.nombreJuego}-{item.descripcionJuego}-{item.categoriaJuego}-{item.horasJuego}
-                                        -{item.nombreJugador}-{item.estadoJuego}-{item.notasJuego}
+                                    <span className='lead'>
+                                        {item.nombrejuego}<hr />
+                                        {item.Descripcion}<hr />
+                                        {item.Categoria}<hr />
+                                        {item.TiempoJugado}<hr />
+                                        {item.nombreJugador}<hr />
+                                        {item.estadoJuego}<hr />
+                                        {item.notasJuego}
                                     </span>
+                                    <hr />
                                     <button className='btn btn-danger btn-sm float-end mx-2' onClick={() => eliminar(item.id)}>
                                         Eliminar
                                     </button>

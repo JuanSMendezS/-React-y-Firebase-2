@@ -163,8 +163,14 @@ const Formulario = () => {
     }
 
     const eliminar = id => {
-        const aux = listajuegos.filter(item => item.id !== id)
-        setListajuegos(aux)
+        try{
+            const dataBase = firebase.firestore()
+            dataBase.collection('Juegos').doc(id).delete()
+            const aux = listajuegos.filter(item => item.id !== id)
+            setListajuegos(aux)
+        }catch(error){
+            console.log(error)
+        }
     }
 
     const cancelar = () => {

@@ -27,7 +27,7 @@ const Formulario = () => {
                     }
                 ))
 
-                 console.log(arrayData)
+                console.log(arrayData)
                 setListajuegos(arrayData)
 
             } catch (error) {
@@ -35,7 +35,7 @@ const Formulario = () => {
             }
         }
         obtenerDatos()
-    },[])
+    }, [])
 
     const guardarJuegos = async (e) => {
         e.preventDefault()
@@ -44,48 +44,46 @@ const Formulario = () => {
             setError('Digite le juego')
             return
         }
-
         if (!descripcion.trim()) {
             setError('Agregue una Descripción del juego')
             return
         }
-
         if (!categoria.trim()) {
             setError('Agregue la categoria del juego')
             return
         }
-
         if (!horasJuego.trim()) {
             setError('Coloque la cantidad de horas dedicadas al juego')
             return
         }
-
         if (!jugador.trim()) {
             setError('Especifique el nombre del jugador')
             return
         }
-
         if (!estadoJuego.trim()) {
             setError('Especifique el estado del juego')
             return
         }
-
         if (!notasJuego.trim()) {
             setError('Coloque algunas notas sobre el juego')
             return
         }
 
-        /**setListajuegos([
-            ...listajuegos,
-            {
-                id: nanoid(), nombrejuego: juego, Descripcion: descripcion, Categoria: categoria,
-                TiempoJugado: horasJuego, nombreJugador: jugador, estadoJuego: estadoJuego, notasJuego: notasJuego
-            }
-        ])*/
-
         try {
-            const dataBase = firebase.firestore()
-            const nuevoJuego = {
+            const dataBase = firebase.firestore();
+            const nuevoRegistro = {
+                nombrejuego: juego,
+                Descripcion: descripcion,
+                Categoria: categoria,
+                TiempoJugado: horasJuego,
+                nombreJugador: jugador,
+                estadoJuego: estadoJuego,
+                notasJuego: notasJuego
+            };
+            const data = await dataBase.collection('Juegos').add(nuevoRegistro)
+            console.log(data)
+            setListajuegos([...listajuegos,
+            {
                 nombrejuego: juego,
                 Descripcion: descripcion,
                 Categoria: categoria,
@@ -94,18 +92,17 @@ const Formulario = () => {
                 estadoJuego: estadoJuego,
                 notasJuego: notasJuego
             }
+            ])
 
-            const data = await dataBase.collection('Juegos').add(nuevoJuego)
-            console.log(data)
             e.target.reset()
             setJuego('')
             setDescripcion('')
             setCategoria('')
             setHorasJuego('')
-            setJugador('')
             setEstadoJuego('')
+            setJugador('')
             setNotasJuego('')
-            setError(null)
+
         } catch (error) {
             console.log(error)
         }
@@ -124,23 +121,45 @@ const Formulario = () => {
         setId(item.id)
     }
 
-    const editarJuegos = e => {
+    const editarJuegos = async e => {
         e.preventDefault()
-        const arrayEditado = listajuegos.map(
-            item => item.id === id ? {
-                id: id, nombrejuego: juego, Descripcion: descripcion, Categoria: categoria,
-                TiempoJugado: horasJuego, nombreJugador: jugador, estadoJuego: estadoJuego, notasJuego: notasJuego
-            } : item
-        )
-        setListajuegos(arrayEditado)
-        setId('')
-        setJuego('')
-        setDescripcion('')
-        setCategoria('')
-        setHorasJuego('')
-        setEstadoJuego('')
-        setJugador('')
-        setNotasJuego('')
+        
+        try {
+            const dataBase = firebase.firestore();
+            await dataBase.collection('Juegos').doc(id).update({
+                nombrejuego: juego,
+                Descripcion: descripcion,
+                Categoria: categoria,
+                TiempoJugado: horasJuego,
+                nombreJugador: jugador,
+                estadoJuego: estadoJuego,
+                notasJuego: notasJuego
+            })
+
+            const registroEditado = listajuegos.map(
+                item => item.id === id ? {
+                    id: id, nombrejuego: juego, Descripcion: descripcion, Categoria: categoria,
+                    TiempoJugado: horasJuego, nombreJugador: jugador, estadoJuego: estadoJuego, notasJuego: notasJuego
+                } : item
+            )
+
+            setListajuegos(registroEditado)
+            
+            e.target.reset()
+            setJuego('')
+            setDescripcion('')
+            setCategoria('')
+            setHorasJuego('')
+            setEstadoJuego('')
+            setJugador('')
+            setNotasJuego('')
+            setModoEdicion(false)
+            setError(null)
+
+        } catch (error) {
+            console.log(error)
+        }
+
     }
 
     const eliminar = id => {
@@ -150,14 +169,14 @@ const Formulario = () => {
 
     const cancelar = () => {
         setModoEdicion(false)
-        setId('')
-        setJuego('')
-        setDescripcion('')
-        setCategoria('')
-        setHorasJuego('')
-        setJugador('')
-        setEstadoJuego('')
-        setNotasJuego('')
+        setId(' ')
+        setJuego(' ')
+        setDescripcion(' ')
+        setCategoria(' ')
+        setHorasJuego(' ')
+        setJugador(' ')
+        setEstadoJuego(' ')
+        setNotasJuego(' ')
         setError(null)
     }
 
@@ -173,7 +192,7 @@ const Formulario = () => {
                             listajuegos.map((item) => (
                                 <li className='list-group-item' key={item.id}>
                                     <span className='lead'>{item.nombreJuego}-{item.descripcionJuego}-{item.categoriaJuego}-{item.horasJuego}
-                                        -{item.nombreJugador}-{item.estadoJuego}
+                                        -{item.nombreJugador}-{item.estadoJuego}-{item.notasJuego}
                                     </span>
                                     <button className='btn btn-danger btn-sm float-end mx-2' onClick={() => eliminar(item.id)}>
                                         Eliminar
@@ -235,7 +254,7 @@ const Formulario = () => {
                                 className='form-control mb-2'
                                 placeholder='Notas o pensamientos del juego'
                                 type="text"
-                                onChange={(e) => setEstadoJuego(e.target.value)}
+                                onChange={(e) => setNotasJuego(e.target.value)}
                             />
 
                             {

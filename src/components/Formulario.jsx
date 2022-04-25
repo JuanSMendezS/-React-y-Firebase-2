@@ -1,5 +1,4 @@
 import React from 'react'
-
 import { firebase } from '../firebase.js'
 
 const Formulario = () => {
@@ -106,7 +105,6 @@ const Formulario = () => {
         } catch (error) {
             console.log(error)
         }
-
     }
 
     const editar = item => {
@@ -123,7 +121,7 @@ const Formulario = () => {
 
     const editarJuegos = async e => {
         e.preventDefault()
-        
+
         try {
             const dataBase = firebase.firestore();
             await dataBase.collection('Juegos').doc(id).update({
@@ -144,7 +142,7 @@ const Formulario = () => {
             )
 
             setListajuegos(registroEditado)
-            
+
             e.target.reset()
             setJuego('')
             setDescripcion('')
@@ -163,12 +161,12 @@ const Formulario = () => {
     }
 
     const eliminar = id => {
-        try{
+        try {
             const dataBase = firebase.firestore()
             dataBase.collection('Juegos').doc(id).delete()
             const aux = listajuegos.filter(item => item.id !== id)
             setListajuegos(aux)
-        }catch(error){
+        } catch (error) {
             console.log(error)
         }
     }
